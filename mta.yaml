@@ -1,30 +1,38 @@
-_schema-version: 3.3.0
+_schema-version: "3.1"
 ID: my-cap-app
+description: Minimal CAP with Job Scheduler
 version: 1.0.0
-description: "A simple CAP project."
-parameters:
-  enable-parallel-deployments: true
-build-parameters:
-  before-all:
-    - builder: custom
-      commands:
-        - npm ci
-        - npx cds build --production
+
 modules:
   - name: my-cap-app-srv
     type: nodejs
     path: gen/srv
     parameters:
-      instances: 1
       buildpack: nodejs_buildpack
+      memory: 512M
     build-parameters:
       builder: npm-ci
+    requires:
+      - name: my-cap-app-auth
+      - name: my-cap-app-job-scheduler
     provides:
-      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+      - name: srv-api
         properties:
           srv-url: ${default-url}
-    requires:
-      []
 
 resources:
-  []
+  - name: my-cap-app-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      config:
+        path: ./xs-security.json
+
+  - name: my-cap-app-job-scheduler
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: jobscheduler
+      service-plan: lite
+      config:
+        enable-xsuaa-support: true

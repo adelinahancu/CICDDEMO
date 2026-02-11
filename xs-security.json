@@ -1,28 +1,24 @@
 {
   "xsappname": "my-cap-app",
   "tenant-mode": "dedicated",
-  "description": "CAP Application with Job Scheduling integration",
+  "description": "CAP Application with Job Scheduling",
   "scopes": [
     {
       "name": "$XSAPPNAME.Jobs",
       "description": "SAP Job Scheduling service Scope",
       "grant-as-authority-to-apps": [
-        "$XSSERVICENAME(job-scheduling-instance)"
+        "$XSSERVICENAME(my-job-scheduler)"
       ]
     },
     {
       "name": "$XSAPPNAME.Display",
       "description": "Display authorization"
-    },
-    {
-      "name": "$XSAPPNAME.Admin",
-      "description": "Admin authorization"
     }
   ],
   "role-templates": [
     {
       "name": "JobSchedulerRole",
-      "description": "Role for job scheduling operations",
+      "description": "Job Scheduler operations",
       "scope-references": [
         "$XSAPPNAME.Jobs"
       ]
@@ -33,24 +29,9 @@
       "scope-references": [
         "$XSAPPNAME.Display"
       ]
-    },
-    {
-      "name": "Administrator",
-      "description": "Manage application and jobs",
-      "scope-references": [
-        "$XSAPPNAME.Display",
-        "$XSAPPNAME.Admin",
-        "$XSAPPNAME.Jobs"
-      ]
     }
   ],
   "authorities": [
     "$ACCEPT_GRANTED_AUTHORITIES"
-  ],
-  "oauth2-configuration": {
-    "grant-types": [
-      "authorization_code",
-      "client_credentials"
-    ]
-  }
+  ]
 }
